@@ -1,16 +1,18 @@
 import { Handlers } from "https://deno.land/x/fresh@1.1.2/server.ts";
 import { ITodoItem } from "../index.tsx";
 
+let TODOS: ITodoItem[] = [];
 export const getTodos = () => {
-  const todosString = localStorage.getItem("todos") || "[]";
-  const todos: ITodoItem[] = JSON.parse(todosString);
-  return todos;
+  // const todosString = localStorage.getItem("todos") || "[]";
+  // const todos: ITodoItem[] = JSON.parse(todosString);
+  return TODOS;
 };
 
 const saveTodos = (todos: ITodoItem[]) => {
-  const newTodosString = JSON.stringify(todos);
-  localStorage.setItem("todos", newTodosString);
-  return newTodosString;
+  // const newTodosString = JSON.stringify(todos);
+  // localStorage.setItem("todos", newTodosString);
+  TODOS = todos;
+  return JSON.stringify(TODOS);
 };
 
 const headers = { "Content-Type": "application/json" };
