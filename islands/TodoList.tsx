@@ -30,7 +30,7 @@ export default function TodoList({ todos }: TodoListProps) {
     setNewTodoText(() => input.value);
   };
 
-  const addNewTodo = (e: Event) => {
+  const addNewTodo = async (e: Event) => {
     e.preventDefault();
     if (!newTodoText.trim()) return;
     const newTodo: ITodoItem = {
@@ -39,12 +39,14 @@ export default function TodoList({ todos }: TodoListProps) {
       id: Date.now(),
     };
 
-    fetch(apiPath, {
+    const response = await fetch(apiPath, {
       method: "PUT",
       headers,
       body: JSON.stringify(newTodo),
     });
+    const newTodos = await response.json();
 
+    setTodoList(() => newTodos);
     setNewTodoText("");
   };
 
