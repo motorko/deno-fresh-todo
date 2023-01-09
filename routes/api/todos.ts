@@ -1,17 +1,6 @@
 import { Handlers } from "https://deno.land/x/fresh@1.1.2/server.ts";
 import { ITodoItem } from "../index.tsx";
-import channel from "../../channel.ts";
-
-let TODOS: ITodoItem[] = [];
-export const getTodos = () => {
-  return TODOS;
-};
-
-const saveTodos = (todos: ITodoItem[]) => {
-  TODOS = todos;
-  channel.dispatchEvent(new Event("message"));
-  return JSON.stringify(TODOS);
-};
+import channel, { getTodos, saveTodos } from "../../channel.ts";
 
 const headers = { "Content-Type": "application/json" };
 
@@ -21,18 +10,22 @@ export const handler: Handlers = {
 
     const stream = new ReadableStream({
       start: (controller) => {
-        channel.onmessage = () => {
+        channel.addEventListener("update", () => {
           const body = `data: ${JSON.stringify(todos)}\n\n`;
           controller.enqueue(body);
-        };
+        });
+        // channel.onmessage = () => {
+
+        // };
       },
     });
 
     return new Response(stream.pipeThrough(new TextEncoderStream()), {
-      headers: { "content-type": "text/event-stream" },
+      headers: {
+        "content-type": "text/event-stream",
+        "Connection": "Keep-Alive",
+      },
     });
-
-    // return new Response(JSON.stringify(todos), { headers });
   },
   async PUT(req) {
     const json: ITodoItem = await req.json();

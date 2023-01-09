@@ -17,7 +17,7 @@ export default function TodoList({ todos }: TodoListProps) {
 
   useEffect(() => {
     if (IS_BROWSER) {
-      const evtSource = new EventSource("/api/todos");
+      const evtSource = new EventSource(apiPath);
       evtSource.onmessage = (e) => {
         setTodoList(() => JSON.parse(e.data));
       };
@@ -46,7 +46,7 @@ export default function TodoList({ todos }: TodoListProps) {
     });
     const newTodos = await response.json();
 
-    setTodoList(() => newTodos);
+    // setTodoList(() => newTodos);
     setNewTodoText("");
   };
 
@@ -58,7 +58,7 @@ export default function TodoList({ todos }: TodoListProps) {
     });
 
     const todos: ITodoItem[] = await response.json();
-    setTodoList(() => todos);
+    // setTodoList(() => todos);
   };
 
   const removeTodo = async (item: ITodoItem) => {
@@ -69,7 +69,7 @@ export default function TodoList({ todos }: TodoListProps) {
     });
 
     const todos: ITodoItem[] = await response.json();
-    setTodoList(() => todos);
+    // setTodoList(() => todos);
   };
 
   return (

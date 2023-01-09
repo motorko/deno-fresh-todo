@@ -2,7 +2,7 @@ import { Head } from "$fresh/runtime.ts";
 import { Handlers, PageProps } from "$fresh/server.ts";
 
 import TodoList from "../islands/TodoList.tsx";
-import { getTodos } from "./api/todos.ts";
+import { getTodos } from "../channel.ts";
 
 export interface ITodoItem {
   text: string;
