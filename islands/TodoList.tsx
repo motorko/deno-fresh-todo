@@ -1,4 +1,5 @@
-import { useState } from "preact/hooks";
+import { IS_BROWSER } from "$fresh/runtime.ts";
+import { useEffect, useState } from "preact/hooks";
 import { Form } from "../components/Form.tsx";
 import TodoItem from "../components/TodoItem.tsx";
 import { ITodoItem } from "../routes/index.tsx";
@@ -14,13 +15,22 @@ export default function TodoList({ todos }: TodoListProps) {
   const [todoList, setTodoList] = useState(todos);
   const [newTodoText, setNewTodoText] = useState("");
 
+  useEffect(() => {
+    if (IS_BROWSER) {
+      const evtSource = new EventSource("/api/todos");
+      evtSource.onmessage = (e) => {
+        setTodoList(() => JSON.parse(e.data));
+      };
+    }
+  }, []);
+
   const onChange = (e: Event) => {
     const input = e.target as HTMLInputElement;
 
     setNewTodoText(() => input.value);
   };
 
-  const addNewTodo = async (e: Event) => {
+  const addNewTodo = (e: Event) => {
     e.preventDefault();
     if (!newTodoText.trim()) return;
     const newTodo: ITodoItem = {
@@ -29,14 +39,12 @@ export default function TodoList({ todos }: TodoListProps) {
       id: Date.now(),
     };
 
-    const response = await fetch(apiPath, {
+    fetch(apiPath, {
       method: "PUT",
       headers,
       body: JSON.stringify(newTodo),
     });
-    const newTodos = await response.json();
 
-    setTodoList(() => newTodos);
     setNewTodoText("");
   };
 

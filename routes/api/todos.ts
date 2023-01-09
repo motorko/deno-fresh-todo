@@ -1,27 +1,39 @@
 import { Handlers } from "https://deno.land/x/fresh@1.1.2/server.ts";
 import { ITodoItem } from "../index.tsx";
 
+const channel = new BroadcastChannel("todos");
+
 let TODOS: ITodoItem[] = [];
 export const getTodos = () => {
-  // const todosString = localStorage.getItem("todos") || "[]";
-  // const todos: ITodoItem[] = JSON.parse(todosString);
   return TODOS;
 };
 
 const saveTodos = (todos: ITodoItem[]) => {
-  // const newTodosString = JSON.stringify(todos);
-  // localStorage.setItem("todos", newTodosString);
   TODOS = todos;
+  channel.dispatchEvent(new Event("message"));
   return JSON.stringify(TODOS);
 };
 
 const headers = { "Content-Type": "application/json" };
 
 export const handler: Handlers = {
-  GET(_) {
+  GET() {
     const todos = getTodos();
 
-    return new Response(JSON.stringify(todos), { headers });
+    const stream = new ReadableStream({
+      start: (controller) => {
+        channel.onmessage = () => {
+          const body = `data: ${JSON.stringify(todos)}\n\n`;
+          controller.enqueue(body);
+        };
+      },
+    });
+
+    return new Response(stream.pipeThrough(new TextEncoderStream()), {
+      headers: { "content-type": "text/event-stream" },
+    });
+
+    // return new Response(JSON.stringify(todos), { headers });
   },
   async PUT(req) {
     const json: ITodoItem = await req.json();
