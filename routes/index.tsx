@@ -24,7 +24,7 @@ export default function Home({ data }: PageProps<ITodoItem[]>) {
       <Head>
         <title>Todos</title>
       </Head>
-      <div class="w-1/3 mx-auto py-10 font-mono">
+      <div class="w-4/5 xl:w-1/2 mx-auto py-10 font-mono">
         <TodoList todos={data} />
       </div>
     </>
