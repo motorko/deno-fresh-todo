@@ -2,6 +2,12 @@ import { Handlers } from "https://deno.land/x/fresh@1.1.2/server.ts";
 import { ITodoItem } from "../index.tsx";
 import { getTodos, saveTodos } from "../../channel.ts";
 
+interface IRemoteAddr {
+  hostname: string;
+  port: number;
+  transport: string;
+}
+
 export const handler: Handlers = {
   GET() {
     let handler: () => void;
@@ -26,16 +32,21 @@ export const handler: Handlers = {
       },
     });
   },
-  async PUT(req) {
+  async PUT(req, ctx) {
     const json: ITodoItem = await req.json();
     const todos: ITodoItem[] = getTodos();
 
-    todos.push(json);
+    const remoteAddr = ctx.remoteAddr as IRemoteAddr;
+
+    todos.push({
+      ...json,
+      author: remoteAddr.hostname,
+    });
 
     saveTodos(todos);
     return new Response(JSON.stringify({ ok: true }));
   },
-  async POST(req) {
+  async POST(req: Request) {
     const json: ITodoItem = await req.json();
     const todos: ITodoItem[] = getTodos();
 

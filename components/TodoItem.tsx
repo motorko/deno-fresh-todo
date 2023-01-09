@@ -9,7 +9,10 @@ interface TodoItemProps {
 
 export default function TodoItem({ item, toggle, remove }: TodoItemProps) {
   return (
-    <li class="flex items-center gap-4 border rounded px-4 py-2">
+    <li class="flex relative items-center gap-4 border rounded px-4 py-3">
+      <div class="text-[9px] absolute top-1 left-1">
+        {item.author}
+      </div>
       <div class="flex flex-shrink-0 items-center justify-center cursor-pointer">
         <Checkbox checked={item.done} onClick={() => toggle(item)} />
       </div>

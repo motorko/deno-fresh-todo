@@ -8,6 +8,7 @@ export interface ITodoItem {
   text: string;
   done: boolean;
   id: number;
+  author?: string;
 }
 
 export const handler: Handlers = {
