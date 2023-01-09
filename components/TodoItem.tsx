@@ -25,6 +25,7 @@ export default function TodoItem({ item, toggle, remove }: TodoItemProps) {
         class="flex-shrink-0 h-[20px] w-[20px] flex justify-center items-center transition-all hover:text-red-500"
       >
         <svg
+          class="block w-full h-full"
           viewBox="0 0 32 32"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
