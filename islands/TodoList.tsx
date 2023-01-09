@@ -39,37 +39,29 @@ export default function TodoList({ todos }: TodoListProps) {
       id: Date.now(),
     };
 
-    const response = await fetch(apiPath, {
+    await fetch(apiPath, {
       method: "PUT",
       headers,
       body: JSON.stringify(newTodo),
     });
-    const newTodos = await response.json();
 
-    // setTodoList(() => newTodos);
     setNewTodoText("");
   };
 
   const toggleTodo = async (item: ITodoItem) => {
-    const response = await fetch(apiPath, {
+    await fetch(apiPath, {
       method: "POST",
       headers,
       body: JSON.stringify(item),
     });
-
-    const todos: ITodoItem[] = await response.json();
-    // setTodoList(() => todos);
   };
 
   const removeTodo = async (item: ITodoItem) => {
-    const response = await fetch(apiPath, {
+    await fetch(apiPath, {
       method: "DELETE",
       headers,
       body: JSON.stringify(item),
     });
-
-    const todos: ITodoItem[] = await response.json();
-    // setTodoList(() => todos);
   };
 
   return (

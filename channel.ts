@@ -1,6 +1,5 @@
 import { ITodoItem } from "./routes/index.tsx";
 
-const channel = new BroadcastChannel("todos");
 let TODOS: ITodoItem[] = [];
 
 export const getTodos = () => {
@@ -9,8 +8,5 @@ export const getTodos = () => {
 
 export const saveTodos = (todos: ITodoItem[]) => {
   TODOS = todos;
-  channel.dispatchEvent(new Event("update"));
-  return JSON.stringify(TODOS);
+  globalThis.dispatchEvent(new CustomEvent("update-todos"));
 };
-
-export default channel;

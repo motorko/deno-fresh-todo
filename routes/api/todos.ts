@@ -1,22 +1,15 @@
 import { Handlers } from "https://deno.land/x/fresh@1.1.2/server.ts";
 import { ITodoItem } from "../index.tsx";
-import channel, { getTodos, saveTodos } from "../../channel.ts";
-
-const headers = { "Content-Type": "application/json" };
+import { getTodos, saveTodos } from "../../channel.ts";
 
 export const handler: Handlers = {
   GET() {
-    const todos = getTodos();
-
     const stream = new ReadableStream({
       start: (controller) => {
-        channel.addEventListener("update", () => {
-          const body = `data: ${JSON.stringify(todos)}\n\n`;
+        globalThis.addEventListener("update-todos", () => {
+          const body = `data: ${JSON.stringify(getTodos())}\n\n`;
           controller.enqueue(body);
         });
-        // channel.onmessage = () => {
-
-        // };
       },
     });
 
@@ -33,8 +26,8 @@ export const handler: Handlers = {
 
     todos.push(json);
 
-    const newTodosString = saveTodos(todos);
-    return new Response(newTodosString);
+    saveTodos(todos);
+    return new Response(JSON.stringify({ ok: true }));
   },
   async POST(req) {
     const json: ITodoItem = await req.json();
@@ -45,8 +38,8 @@ export const handler: Handlers = {
       currentTodo.done = !currentTodo.done;
     }
 
-    const newTodosString = saveTodos(todos);
-    return new Response(newTodosString, { headers });
+    saveTodos(todos);
+    return new Response(JSON.stringify({ ok: true }));
   },
   async DELETE(req) {
     const json: ITodoItem = await req.json();
@@ -54,7 +47,7 @@ export const handler: Handlers = {
 
     todos = todos.filter((todo) => todo.id !== json.id);
 
-    const newTodosString = saveTodos(todos);
-    return new Response(newTodosString, { headers });
+    saveTodos(todos);
+    return new Response(JSON.stringify({ ok: true }));
   },
 };
