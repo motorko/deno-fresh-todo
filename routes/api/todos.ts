@@ -1,7 +1,6 @@
 import { Handlers } from "https://deno.land/x/fresh@1.1.2/server.ts";
 import { ITodoItem } from "../index.tsx";
-
-const channel = new BroadcastChannel("todos");
+import channel from "../../channel.ts";
 
 let TODOS: ITodoItem[] = [];
 export const getTodos = () => {
