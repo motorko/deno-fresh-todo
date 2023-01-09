@@ -64,7 +64,7 @@ export default function TodoList({ todos }: TodoListProps) {
 
   return (
     <>
-      <h1 class="text-4xl mb-4">
+      <h1 class="text-4xl mb-4 uppercase">
         Todos
       </h1>
       <div class="mb-4">
