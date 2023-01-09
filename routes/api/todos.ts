@@ -4,12 +4,18 @@ import { getTodos, saveTodos } from "../../channel.ts";
 
 export const handler: Handlers = {
   GET() {
+    let handler: () => void;
+
     const stream = new ReadableStream({
       start: (controller) => {
-        globalThis.addEventListener("update-todos", () => {
+        handler = () => {
           const body = `data: ${JSON.stringify(getTodos())}\n\n`;
           controller.enqueue(body);
-        });
+        };
+        globalThis.addEventListener("update-todos", handler);
+      },
+      cancel: () => {
+        globalThis.removeEventListener("update-todos", handler);
       },
     });
 
